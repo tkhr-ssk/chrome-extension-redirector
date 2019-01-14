@@ -26,7 +26,7 @@ function add() {
     return;
   }
   redirects = getRedirects();
-  redirects.push([$from.val(), $to.val()]);
+  redirects.push([$from.val(), $to.val(), true]);
   setRedirects(redirects);
   $from.val('');
   $to.val('');
@@ -64,7 +64,7 @@ function storageUpdate() {
   $tbody.html('');
   $('#redirects').toggle(redirects.length>0);
   for (var i=0; i<redirects.length; i++) {
-    addToTable(i, redirects[i][0], redirects[i][1]);
+    addToTable(i, redirects[i][0], redirects[i][1], redirects[i][2]);
   }
 }
 
@@ -76,16 +76,32 @@ function tmpl(id, context) {
   return $(tmpl);
 }
 
-function addToTable(id, from, to) {
+function toggle() {
+  console.log(this);
+  var prop = this.checked;
+  console.log(prop);
+  redirects = getRedirects();
+  if (!redirects) {
+    // something odd happened, trigger storage update.
+    storageUpdate();
+    return;
+  }
+  console.log ( redirects[this.value] );
+  redirects[this.value][2] = this.checked;
+  setRedirects(redirects);
+}
+
+function addToTable(id, from, to, enabled) {
   var $row = tmpl('table_row_tpl', {
     'id': id,
     'from': from,
-    'to': to
+    'to': to,
+    'checked': enabled?'checked':''
   });
+  $row.find('input.check').on('change', toggle);
   $row.find('button.remove').on('click', remove);
   $row.appendTo($('#redirects table tbody'));
 }
-
 
 $(document).ready(function(){
   $('#add').on('click', add);

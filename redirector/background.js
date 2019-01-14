@@ -3,6 +3,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     var redirects, pattern, from, to, redirecUrl;
     redirects = JSON.parse(localStorage.getItem('redirects') || '[]');
     for (var i=0; i<redirects.length; i++) {
+      if (!redirects[i][2]) continue;
       from = redirects[i][0];
       to = redirects[i][1];
       try {
@@ -25,7 +26,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     urls: [
       "<all_urls>",
     ],
-    types: ["main_frame"]
+    types: ["main_frame", "xmlhttprequest"]
   },
   ["blocking"]
 );
